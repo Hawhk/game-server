@@ -1,0 +1,6 @@
+{
+    "database": "games",
+    "host": "localhost",
+    "user": "root",
+    "password": "password"
+}
