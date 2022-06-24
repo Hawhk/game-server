@@ -1,10 +1,10 @@
 const { Game, Script } = require("./models");
 const express = require('express');
-const fs = require('fs');
+
+const port = process.env.PORT || 3000;
 
 const app = express();
 
-const CONFIG = JSON.parse(fs.readFileSync('config.json'));
 
 app.set('view engine', 'ejs');
 app.use('/static', express.static('games'));
@@ -25,4 +25,4 @@ app.get('/game/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () => console.log('Server is listining on http://localhost:3000.'));
+app.listen(port, () => console.log(`Server is listining on http://localhost:${port}`));
