@@ -1,7 +1,7 @@
 # Game server for p5.js games
 
 ## Installation
-Download server from [GitHub](https://github.com/Hawhk/gameserver).
+Download server from [GitHub](https://github.com/Hawhk/game-server).
 
 Install packages by running `npm install`
 

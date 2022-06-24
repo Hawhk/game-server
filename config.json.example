@@ -2,5 +2,6 @@
     "database": "games",
     "host": "localhost",
     "user": "root",
-    "password": "password"
+    "password": "password",
+    "dialect": /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
 }

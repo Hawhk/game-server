@@ -1,24 +1,19 @@
-CREATE USER 'hawhk'@'localhost' IDENTIFIED WITH authentication_plugin BY 'Hamsteragg1';
-
-CREATE DATABASE IF NOT EXISTS `games`;
+DROP DATABASE IF EXISTS `games`;
+CREATE DATABASE `games`;
 USE `games`;
 
 CREATE TABLE IF NOT EXISTS game(
-    id CHAR(36) NOT NULL PRIMARY KEY,
+    id CHAR(36) NOT NULL,
     name VARCHAR(255) NOT NULL,
-    link VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL
+    PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS includes(
-    id CHAR(36) NOT NULL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS script(
+    id CHAR(36) NOT NULL,
     game_id CHAR(36) NOT NULL,
     path VARCHAR(255) NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(id)
-)
-
-INSERT into game(id, name, link, description) 
-VALUES (UUID(), 'Solitare', 'solitare/game', 'A solitaire game');
-
-
+    nr INT NOT NULL,
+    FOREIGN KEY (game_id) REFERENCES game(id),
+    PRIMARY KEY (id)
+);
 

@@ -1,44 +1,28 @@
+const { Game, Script } = require("./models");
 const express = require('express');
-const mysql = require('mysql')
 const fs = require('fs');
 
 const app = express();
 
 const CONFIG = JSON.parse(fs.readFileSync('config.json'));
 
-const connection = mysql.createConnection({
-    host: CONFIG.host,
-    user: CONFIG.user,
-    password: CONFIG.password,
-    database: CONFIG.database
-});
-
-connection.connect();
-
 app.set('view engine', 'ejs');
+app.use('/static', express.static('games'));
 
 app.get('/', (req, res) => {
-    connection.query('SELECT id, name FROM game', (err, rows) => {
-        console.log("rows:", rows);
-        if (err) throw err;
-        if (!rows) {
-            console.log("here");
-            rows = [];
-        }
-        res.render('index', { games: rows });
+    Game.findAll().then(games => {
+        res.render('index', { games: games });
+    }).catch(err => {
+        console.log(err);
     });
 });
 
 app.get('/game/:id', (req, res) => {
-    connection.query('SELECT * FROM game WHERE id = ?', [req.params.id], (err, rows) => {
-        console.log(rows);
-        if (err) throw err;
-        if (!rows) {
-            console.log("here");
-        }
-
-        res.render('game', { game: rows[0], scripts: [] });
-    })
+    Game.findByPk(req.params.id, { include: [{ model: Script, order: ['nr', 'ASC'] }]} ).then(game => {
+        res.render('game', { game: game.dataValues});
+    }).catch(err => {
+        console.log(err);
+    });
 });
 
 app.listen(3000, () => console.log('Server is listining on http://localhost:3000.'));
