@@ -2,12 +2,25 @@ const fs = require('fs');
 const path = require('path');
 const { Sequelize } = require('sequelize');
 
-const CONFIG = JSON.parse(fs.readFileSync('config.json'));
+let config;
+try {
+    config = JSON.parse(fs.readFileSync('config.json'));
+} catch (err) {
+    console.error("No config file was found!", err);
+    process.exit();
+}
+console.log(config, "p:", config.password);
+const sequelize = new Sequelize(config.database, config.user, config.password, {
+    host: config.host,
+    dialect: config.dialect,
+    logging: config.logging
+});
 
-const sequelize = new Sequelize(CONFIG.database, CONFIG.user, CONFIG.password, {
-    host: CONFIG.host,
-    dialect: CONFIG.dialect,
-    logging: false
+sequelize.authenticate().then(() => {
+    console.log('Connection has been established successfully.');
+}).catch(err => {
+    console.error('Unable to connect to the database', err);
+    process.exit();
 });
 
 const basename = path.basename(__filename);

@@ -3,5 +3,6 @@
     "host": "localhost",
     "user": "root",
     "password": "password",
-    "dialect": /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+    "logging": false,
+    "dialect": /* one of "mysql" | "mariadb" | "postgres" | "mssql" */
 }
