@@ -9,7 +9,6 @@ try {
     console.error("No config file was found!", err);
     process.exit();
 }
-console.log(config, "p:", config.password);
 const sequelize = new Sequelize(config.database, config.user, config.password, {
     host: config.host,
     dialect: config.dialect,
