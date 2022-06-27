@@ -75,9 +75,7 @@ function createGameSrcFile(path, jsonPath) {
     let gameSrces = [];
     let srcs = findSrc(path);
     srcs.forEach((src, index) => {
-        console.log(src);
         if (src.endsWith('.js') !== -1) {
-            console.log("yay");
             if (src.includes('p5')) {
                 console.log("p5 src:", src);
             } else {
