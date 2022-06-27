@@ -14,7 +14,6 @@ fs.readdirSync(gamesDir).filter(async (dir) => { // all directories in "games"
         let game = await Game.create({name: dir});
         fs.readdirSync(gameDir).filter((file) => { // all files in game directory
             let gameFile = path.join(gameDir,file);
-            console.log(gameFile);
             if(fs.statSync(gameFile).isDirectory()) { // if it's a directory
                 if (DirsToDelete.indexOf(file) === -1) {
                     fs.readdirSync(gameFile).filter((file) => {
