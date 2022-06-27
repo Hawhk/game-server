@@ -2,8 +2,8 @@ const { Game, Script } = require("./models");
 const path = require('path');
 const fs = require('fs');
 
-// Script.destroy({ truncate: {cascade: true }});
-// Game.destroy({ truncate: {cascade: true }});
+Script.destroy({ truncate: {cascade: true }});
+Game.destroy({ truncate: {cascade: true }});
 
 const DirsToDelete = ["addons", ".git", ".DS_Store"];
 
