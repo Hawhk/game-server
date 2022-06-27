@@ -29,8 +29,6 @@ fs.readdirSync(gamesDir).filter(async (dir) => { // all directories in "games"
     }
 });
 
-
-
 function gameDirFiles(gameDir, jsonPath){
     fs.readdirSync(gameDir).filter((file) => { // all files in game directory
         let gameFile = path.join(gameDir,file);
