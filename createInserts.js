@@ -1,4 +1,4 @@
-// const { Game, Script } = require("./models");
+const { Game, Script } = require("./models");
 const path = require('path');
 const fs = require('fs');
 
