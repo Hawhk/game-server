@@ -9,7 +9,7 @@ const DirsToDelete = ["addons", ".git", ".DS_Store"];
 
 let gamesDir = path.join(__dirname, 'games');
 fs.readdirSync(gamesDir).filter(async (dir) => { // all directories in "games"
-    if (!dir.includes("example") || dirs.length == 1) {
+    if (!dir.includes("example")) {
         let gameDir = path.join(gamesDir, dir);
         let game = await Game.create({name: dir});
         fs.readdirSync(gameDir).filter((file) => { // all files in game directory
