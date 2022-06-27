@@ -26,7 +26,7 @@ fs.readdirSync(gamesDir).filter(async (dir) => { // all directories in "games"
                             if (file.endsWith('.html')) {
                                 let srcs = findSrc(newPath);
                                 srcs.forEach((src, index) => {
-                                    if (file.endsWith('.js') !== -1) {
+                                    if (src.endsWith('.js') !== -1) {
                                         Script.create({game_id: game.id, path: src, nr: index});
                                     }
                                 });
