@@ -17,7 +17,6 @@ if (config.dialect !== 'sqlite') {
         logging: config.logging
     });
 } else {
-    // console.log(console.log(config.pathToStorage));
     sequelize = new Sequelize({
         dialect: config.dialect,
         storage: config.pathToStorage,
