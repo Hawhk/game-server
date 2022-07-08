@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS `games`;
-CREATE DATABASE `games`;
-USE `games`;
+-- DROP DATABASE IF EXISTS `games`;
+-- CREATE DATABASE `games`;
+-- USE `games`;
 
 CREATE TABLE IF NOT EXISTS game(
     id CHAR(36) NOT NULL,

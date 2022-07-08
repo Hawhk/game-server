@@ -4,5 +4,6 @@
     "user": "root",
     "password": "password",
     "logging": false,
-    "dialect": /* one of "mysql" | "mariadb" | "postgres" | "mssql" */
+    "dialect": /* one of "mysql" | "mariadb" | "postgres" | "mssql" | "sqlite" */,
+    "pathToStorage": "path/to/sqlite",
 }

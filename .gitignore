@@ -1,5 +1,6 @@
 config.json
 node_modules
-games/*
+*.sqlite
 
+games/*
 !games/example
