@@ -1,29 +1,24 @@
-const { Game, Script } = require("./models");
 const express = require('express');
+const expressSession = require('express-session');
+
+const index = require('./routes/index');
+const game = require('./routes/game');
+const api = require('./routes/api');
+
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
-
 const app = express();
 
+app.enable('trust proxy');
 
-app.set('view engine', 'ejs');
+app.use(expressSession({ secret: 'secret', resave: false, saveUninitialized: true }));
 app.use('/static', express.static('games'));
 
-app.get('/', (req, res) => {
-    Game.findAll().then(games => {
-        res.render('index', { games: games });
-    }).catch(err => {
-        console.log(err);
-    });
-});
+app.use('/', index);
+app.use('/game/', game);
+app.use('/api', api);
 
-app.get('/game/:id', (req, res) => {
-    Game.findByPk(req.params.id, { include: [{ model: Script, order: ['nr', 'ASC'] }]} ).then(game => {
-        res.render('game', { game: game.dataValues});
-    }).catch(err => {
-        console.log(err);
-    });
-});
+app.set('view engine', 'ejs');
 
 app.listen(port, () => console.log(`Server is listining on http://localhost:${port}`));
