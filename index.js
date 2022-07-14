@@ -3,20 +3,21 @@ const expressSession = require('express-session');
 const expressVisitorCounter = require('express-visitor-counter');
 
 const mongoUtil = require('./mongoUtil');
-const loging = require('./logs');
-
+const log = require('./logs');
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
-const logingFormat = process.env.LOGING_FORMAT || 'dev';
+
 const logDir = process.env.LOG_DIR || 'logs';
+const secret = process.env.SESSION_SECRET || 'secret';
+const logingFormat = process.env.LOGING_FORMAT || 'dev';
 
 const app = express();
 
 app.enable('trust proxy');
 
-app.use(expressSession({ secret: 'secret', resave: false, saveUninitialized: true }));
-app.use(loging(logingFormat, logDir));
+app.use(expressSession({ secret: secret, resave: false, saveUninitialized: true }));
+app.use(log.loging(logingFormat, logDir));
 app.use('/static', express.static('games'));
 
 mongoUtil.connectToServer(err => { 
