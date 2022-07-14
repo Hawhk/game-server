@@ -113,7 +113,7 @@ router.get('/logs/ips', async (req, res) => {
     const keys = ['status', 'method'];
     let ips = {};
     logRows.forEach(log => {
-        ips[log.ip] ? ips[log.ip].count++ : ips[log.ip] = {count: 1, days: 1};
+        ips[log.ip] ? ips[log.ip].count++ : ips[log.ip] = {count: 1, days: 0};
 
         keys.forEach(key => {
             if (!ips[log.ip][key]){
