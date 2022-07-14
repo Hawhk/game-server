@@ -38,7 +38,8 @@ router.get('/logs', async (req, res) => {
     filterAndRespond(res, req, logRows);
 });
 
-router.get('/logs/:keyToFilter/:value', async (req, res) => {
+router.get('/logs/:keyToFilter/:value', (req, res) => {
+    let logRows;
     const keyToFilter = req.params.keyToFilter;
     const value = req.params.value;
     if (req.query.month) {
@@ -96,6 +97,51 @@ router.get('/logs/:keyToFilter/:value', async (req, res) => {
     }
 
     filterAndRespond(res, req, logRows);
+});
+
+router.get('/logs/ips', async (req, res) => {
+    let logRows;
+    if (req.query.month) {
+        const fileName = PATH + log.getYearMonth(req.query) + FILE_ENDING;
+        logRows = log.getLog(fileName);
+    } else if (req.query.year && !req.query.month) {
+        logRows = log.getLogsForYear(req.query.year);
+    } else {
+        const fileName = PATH + log.getYearMonth() + FILE_ENDING;
+        logRows = log.getLog(fileName);
+    }
+    const keys = ['status', 'method'];
+    let ips = {};
+    logRows.forEach(log => {
+        ips[log.ip] ? ips[log.ip].count++ : ips[log.ip] = {count: 1, days: 1};
+
+        keys.forEach(key => {
+            if (!ips[log.ip][key]){
+                ips[log.ip][key] = {};
+            }
+            let logKey = log[key]
+            if (!ips[log.ip][key][logKey]){
+                ips[log.ip][key][logKey] = 0;
+            }
+            ips[log.ip][key][logKey]++;
+        });
+        if (!ips[log.ip]["date"]){
+            ips[log.ip]["date"] = {};
+        }
+
+        let date = new Date(log["date"].split(":")[0]);
+        let dateKey = date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+
+        if (!ips[log.ip]["date"][dateKey]){
+            ips[log.ip]["date"][dateKey] = 0;
+            ips[log.ip].days++;
+        }
+        ips[log.ip]["date"][dateKey]++;
+    });
+    Object.keys(ips).forEach(ip => {
+        delete ips[ip]["date"];
+    });
+    res.json(ips);
 });
 
 module.exports=router;
