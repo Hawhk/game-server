@@ -6,3 +6,6 @@ node_modules
 
 games/*
 !games/example
+
+logs/*
+!logs/index.js
