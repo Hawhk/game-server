@@ -1,15 +1,8 @@
 const express  = require('express');
 
 const log = require('../logs');
-const mongoUtil = require('../mongoUtil');
 
 const router = express.Router();
-
-const counters = mongoUtil.getDb().collection('counters');
-
-router.get('/visitors', async (req, res) => {
-    res.json(await counters.find().toArray());
-});
 
 const PATH = process.env.LOG_DIR + '/';
 const FILE_ENDING = '.log';
@@ -52,7 +45,7 @@ router.get('/logs/:keyToFilter/:value', (req, res) => {
         logRows = log.getLog(fileName);
     }
 
-    switch (req.query.comp.toLowerCase()) {
+    switch (req.query.comp) {
         case 'neq':
             logRows = logRows.filter(
                 log => log[keyToFilter].toLowerCase() !== value.toLowerCase()

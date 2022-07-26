@@ -7,7 +7,8 @@ function getLog(logName) {
 
     try {
      log = fs.readFileSync(logName, 'utf8');
-    } catch {
+    } catch (err) {
+        console.log(err);
         return [];
     }
 
