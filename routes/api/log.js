@@ -1,6 +1,6 @@
 const express  = require('express');
 
-const log = require('../logs');
+const log = require('../../logs');
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ function filterAndRespond(res, req, logs) {
     res.json(filteredLogs);
 }
 
-router.get('/logs', async (req, res) => {
+router.get('/', async (req, res) => {
     let logRows;
     if (req.query.month) {
         const fileName = PATH + log.getYearMonth(req.query) + FILE_ENDING;
@@ -31,7 +31,7 @@ router.get('/logs', async (req, res) => {
     filterAndRespond(res, req, logRows);
 });
 
-router.get('/logs/:keyToFilter/:value', (req, res) => {
+router.get('/:keyToFilter/:value', (req, res) => {
     let logRows;
     const keyToFilter = req.params.keyToFilter;
     const value = req.params.value;
@@ -92,7 +92,7 @@ router.get('/logs/:keyToFilter/:value', (req, res) => {
     filterAndRespond(res, req, logRows);
 });
 
-router.get('/logs/ips', async (req, res) => {
+router.get('/ips', async (req, res) => {
     let logRows;
     if (req.query.month) {
         const fileName = PATH + log.getYearMonth(req.query) + FILE_ENDING;

@@ -17,3 +17,11 @@ CREATE TABLE IF NOT EXISTS script(
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS user (
+    id CHAR(36) NOT NULL,
+    -- username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+

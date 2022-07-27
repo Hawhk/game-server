@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hawhk Games</title>
-</head>
-<body>
-    <div style="width: 100%">
-        <div>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/css/style.css">
+        <script src="/static/js/apiRequests.js"></script>
+        <title>Hawhk Games</title>
+    </head>
+    <%- include('includes/header.ejs', user) %> 
+        <div class="container">
             <% games.forEach(game => { %>
-                <a href="/game/<%- game.id %>"> <%- game.name %> </a>
+                <a href="/game/<%- game.id %>" class="box">
+                    <div><%- game.name.charAt(0).toUpperCase() + game.name.slice(1) %></div>
+                </a>
             <% }) %>
         </div>
-    </div>
-</body>
+    <%- include('includes/footer.ejs')%>
 </html>

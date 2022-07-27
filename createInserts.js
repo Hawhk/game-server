@@ -76,11 +76,7 @@ function createGameSrcFile(path, jsonPath) {
     let srcs = findSrc(path);
     srcs.forEach((src, index) => {
         if (src.endsWith('.js') !== -1) {
-            if (src.includes('p5')) {
-                console.log("p5 src:", src);
-            } else {
                 gameSrces.push({path: src, nr: index});
-            }
         }
     });
     fs.unlinkSync(path, (err) => {

@@ -4,20 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> <%- game.name %> </title>
-    <style>
-        body {
-        padding: 0;
-        margin: 0;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js" integrity="sha512-NxocnqsXP3zm0Xb42zqVMvjQIktKEpTIbCXXyhBPxqGZHqhcOXHs4pXI/GoZ8lE+2NJONRifuBpi9DxC58L0Lw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/game.css">
+    <script src="/static/js/apiRequests.js"></script>
+    <script src="/static/js/gameServerFunctions.js"></script>
     <% game.Scripts.forEach(script => { %>
-        <script src="/static/<%- game.name + '/' + script.path %>"></script>
+        <% if (script.path.includes('http')) { %>
+            <script src="<%- script.path %>"></script>
+        <% } else { %>
+            <script src="/gamestatic/<%- game.name + '/' + script.path %>"></script>
+        <% } %>
     <% }) %>
     </head>
-    <body>
+    <%- include('includes/header.ejs', user) %>
         <main>
         </main>
-        By Hawhk 2022
-    </body>
+    <%- include('includes/footer.ejs')%>
 </html>

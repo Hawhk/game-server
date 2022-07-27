@@ -1,5 +1,5 @@
 const express = require('express');
-const expressSession = require('express-session');
+const session = require('express-session');
 
 const log = require('./logs');
 require('dotenv').config();
@@ -17,13 +17,23 @@ const app = express();
 
 app.enable('trust proxy');
 
-app.use(expressSession({ secret: secret, resave: false, saveUninitialized: true }));
+app.use(express.json())
+app.use(session({
+    name: 'game-server-session',
+    secret: secret, 
+    resave: false, 
+    saveUninitialized: false 
+}));
 app.use(log.loging(logingFormat, logDir));
-app.use('/static', express.static('games'));
-app.use('/api', require('./routes/api'));
+app.use('/gamestatic', express.static('games'));
+app.use('/static', express.static('static'));
+app.use('/api', require('./routes/api/index'));
 app.use('/', require('./routes/index'));
 app.use('/game/', require('./routes/game'));
-
+app.use((req, res) => {
+    res.send(req.url);
+});
+  
 app.set('view engine', 'ejs');
 
 
