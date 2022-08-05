@@ -3,7 +3,10 @@ const router = express.Router();
 const { Game, Script } = require('../models');
 
 router.get('/:id', (req, res) => {
-    Game.findByPk(req.params.id, { include: [{ model: Script, order: ['nr', 'ASC'] }]} ).then(game => {
+    Game.findByPk(req.params.id, { 
+        include: [{model:Script}],
+        order: [[Script, 'nr', 'asc']]
+    } ).then(game => {
         if (game) {
             res.render('game', { game: game.dataValues, user: req.session.user });
         } else {

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS script(
     game_id CHAR(36) NOT NULL,
     path VARCHAR(255) NOT NULL,
     nr INT NOT NULL,
+    type VARCHAR(64) NOT NULL,
     FOREIGN KEY (game_id) REFERENCES game(id),
     PRIMARY KEY (id)
 );

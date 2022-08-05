@@ -21,8 +21,9 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
       },
-      game_id: DataTypes.STRING,
+      game_id: DataTypes.UUID,
       path: DataTypes.STRING,
+      type: DataTypes.STRING(64),
       nr: DataTypes.INTEGER
     }, {
       sequelize,

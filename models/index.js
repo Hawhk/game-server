@@ -9,18 +9,21 @@ try {
     console.error("No config file was found!", err);
     process.exit();
 }
-let sequelize 
+let sequelize;
+
+const LOGGING = config.logging ? console.log : false; 
+
 if (config.dialect !== 'sqlite') {
     sequelize = new Sequelize(config.database, config.user, config.password, {
         host: config.host,
         dialect: config.dialect,
-        logging: config.logging
+        logging: LOGGING
     });
 } else {
     sequelize = new Sequelize({
         dialect: config.dialect,
         storage: config.pathToStorage,
-        logging: config.logging
+        logging: LOGGING
     });
 }
 

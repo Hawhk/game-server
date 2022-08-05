@@ -3,7 +3,7 @@
     "host": "localhost",
     "user": "root",
     "password": "password",
-    "logging": false,
+    "logging": /* one of false | true */, 
     "dialect": /* one of "mysql" | "mariadb" | "postgres" | "mssql" | "sqlite" */,
     "pathToStorage": "path/to/sqlite"
 }
