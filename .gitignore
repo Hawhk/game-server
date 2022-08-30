@@ -2,7 +2,9 @@ config.json
 node_modules
 *.sqlite
 .env
+
 *.sh
+!setup.sh
 
 games/*
 !games/example
