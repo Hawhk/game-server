@@ -105,21 +105,19 @@ fi
 if [ "$y" == "true" ]; then
     case $d in
         mysql|mariadb)
-            echo "mysql"
-            mysql -u $u -p$p -h $h -e "CREATE DATABASE IF NOT EXISTS $n" -P $P &&
-            mysql -u $u -p$p -h $h $n < $SQL_FILE -P $P && message_db_creation
+            sudo mysql -u $u -p$p -h $h -e "CREATE DATABASE IF NOT EXISTS $n" -P $P &&
+            sudo mysql -u $u -p$p -h $h $n < $SQL_FILE -P $P && message_db_creation
             ;;
         sqlite)
-            sqlite3 $s < ./database/create.sql && message_db_creation
+            sudo sqlite3 $s < ./database/create.sql && message_db_creation
             ;;
         mssql)
-            sqlcmd -S $h,$P -U $u -P $p -q "CREATE DATABASE $n" && 
-            sqlcmd -S $h,$P -U $u -P $p -i $SQL_FILE && message_db_creation
+            sudo sqlcmd -S $h,$P -U $u -P $p -q "CREATE DATABASE $n" && 
+            sudo sqlcmd -S $h,$P -U $u -P $p -i $SQL_FILE && message_db_creation
             ;;
         postgres)
-            psql -U $u -h $h -p $P -c "CREATE DATABASE $n" && 
-            psql -U $u -h $h -p $P -d $n -f $SQL_FILE && message_db_creation
-            echo "postgres"
+            sudo psql -U $u -h $h -p $P -c "CREATE DATABASE $n" && 
+            sudo psql -U $u -h $h -p $P -d $n -f $SQL_FILE && message_db_creation
             ;;
         *)
             echo "Database dialect not supported"
