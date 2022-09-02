@@ -34,7 +34,7 @@ d="sqlite"
 n="games"
 u="root"
 p=""
-h="localhost"
+h="127.0.0.1"
 P="default"
 l="true"
 s="./database/db.sqlite"
@@ -85,7 +85,7 @@ while getopts ":d:n:u:ph:l:y" o; do
 done
 
 if [ "$d" == "sqlite" ]; then
-JSON_STRING='{
+    JSON_STRING='{
     \n\t"dialect":"'$d'",
     \n\t"storage":"'$s'",
     \n\t"logging":'$l'
