@@ -2,13 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const { Sequelize } = require('sequelize');
 
-
 let config;
 try {
     config = JSON.parse(fs.readFileSync('config.json'));
 } catch (err) {
     console.error("No config file was found!", err);
-    process.exit(1);
+    process.exit(11);
 }
 let sequelize;
 
@@ -19,6 +18,9 @@ if (config.dialect !== 'sqlite') {
         host: config.host,
         dialect: config.dialect,
         logging: LOGGING,
+        define: {
+            timestamps: false
+        },
         define: {
             timestamps: false
         }
