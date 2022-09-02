@@ -105,6 +105,9 @@ fi
 if [ "$y" == "true" ]; then
     case $d in
         mysql|mariadb)
+            if [ $P == "default" ]; then
+                P="3306"
+            fi
             sudo mysql -u $u -p$p -h $h -e "CREATE DATABASE IF NOT EXISTS $n" -P $P &&
             sudo mysql -u $u -p$p -h $h $n < $SQL_FILE -P $P && message_db_creation
             ;;
@@ -112,10 +115,16 @@ if [ "$y" == "true" ]; then
             sudo sqlite3 $s < ./database/create.sql && message_db_creation
             ;;
         mssql)
+            if [ $P == "default" ]; then
+                P="1433"
+            fi
             sudo sqlcmd -S $h,$P -U $u -P $p -q "CREATE DATABASE $n" && 
             sudo sqlcmd -S $h,$P -U $u -P $p -i $SQL_FILE && message_db_creation
             ;;
         postgres)
+            if [ $P == "default" ]; then
+                P="5432"
+            fi
             sudo psql -U $u -h $h -p $P -c "CREATE DATABASE $n" && 
             sudo psql -U $u -h $h -p $P -d $n -f $SQL_FILE && message_db_creation
             ;;
