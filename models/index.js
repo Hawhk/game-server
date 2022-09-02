@@ -2,12 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const { Sequelize } = require('sequelize');
 
+
 let config;
 try {
     config = JSON.parse(fs.readFileSync('config.json'));
 } catch (err) {
     console.error("No config file was found!", err);
-    process.exit();
+    process.exit(1);
 }
 let sequelize;
 
@@ -17,27 +18,28 @@ if (config.dialect !== 'sqlite') {
     sequelize = new Sequelize(config.database, config.user, config.password, {
         host: config.host,
         dialect: config.dialect,
-        logging: LOGGING
+        logging: LOGGING,
+        define: {
+            timestamps: false
+        }
     });
 } else {
     sequelize = new Sequelize({
         dialect: config.dialect,
-        storage: config.pathToStorage,
-        logging: LOGGING
+        storage: config.storage,
+        logging: LOGGING,
+        define: {
+            timestamps: false
+        }
     });
 }
 
-async function authenticate () {
-    try {
-        await sequelize.authenticate();
+sequelize.authenticate().then(() => {
         console.log('Connection has been established successfully.');
-    } catch (err) {
-        console.error('Unable to connect to the database', err);
-        process.exit();
-    }
-}
-
-authenticate();
+}).catch(err => {
+    console.error('Unable to connect to the database', err);
+    process.exit(1);
+});
 
 
 const basename = path.basename(__filename);
@@ -45,8 +47,8 @@ const db = {};
 
 fs.readdirSync(__dirname).filter(file => {
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-}).forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+}).forEach(async (file) => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize);
     db[model.name] = model;
 });
 
@@ -58,4 +60,5 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
 module.exports = db;
