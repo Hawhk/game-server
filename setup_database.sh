@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
+
+d=""
+n="games"
+u="root"
+p=""
+h="localhost"
+P="default"
+l="true"
+s="./database/db.sqlite"
+c="false"
+
 usage() {
     usages=(
         "-d <database dialect>"
-        "-n <database name>"
-        "-u <database user>"
-        "-p <database password>"
-        "-h <database host>"
-        "-P <database port>"
-        "-l <logging true|false>"
-        "-s <sqlite path>"
-        "-H <help>"
-        "-y <create database>"
+        "-n [database name {\"$n\"}]"
+        "-u [database user {\"$u\"}]"
+        "-p [database password {\"$p\"}]"
+        "-h [database host {\"$h\"}]"
+        "-P [database port {default for dialect}]"
+        "-l [logging {\"$l\"}]"
+        "-s [sqlite path {\"$s\"}]"
+        "-H [help]"
+        "-c [create database]"
     )
     echo -e "\nUsage: $0"
     for usage in "${usages[@]}"; do
@@ -19,6 +30,23 @@ usage() {
     echo
 
     exit $1
+}
+
+SUPPORTED_DIALECTS=(mysql mariadb sqlite mssql postgres)
+
+dialects_available() {
+    echo "Supported dialects: ${SUPPORTED_DIALECTS[@]}"
+    usage 1
+    exit 1
+}
+
+dialect_supported() {
+    for dialect in "${SUPPORTED_DIALECTS[@]}"; do
+        if [[ "$dialect" == "$1" ]]; then
+            return 0
+        fi
+    done
+    return 1
 }
 
 message_db_creation() {
@@ -33,17 +61,12 @@ message_db_creation() {
 
 SQL_FILE="./database/create.sql"
 
-d="sqlite"
-n="games"
-u="root"
-p=""
-h="localhost"
-P="default"
-l="true"
-s="./database/db.sqlite"
-y="false"
 
-while getopts ":d:n:u:ph:l:y" o; do
+if [ "$#" -eq 0 ]; then
+    usage 1
+fi
+
+while getopts ":d:n:u:ph:l:s:c" o; do
     case "${o}" in
         d) #database/dialect
             d=${OPTARG}
@@ -78,14 +101,30 @@ while getopts ":d:n:u:ph:l:y" o; do
         H) #help
             usage 0
             ;;
-        y) #sync database
-            y="true"
+        c) #create database
+            c="true"
+            ;;
+
+        :)
+            if [[ $OPTARG != "d" ]]; then
+                echo "Option -$OPTARG requires an argument." >&2
+                usage 1
+            fi
+            ;;
+        \?)
+            echo "Unimplemented option: -$OPTARG" >&2
+            usage 1
             ;;
         *)
             usage 1
             ;;
     esac
 done
+
+if ! dialect_supported "$d"; then
+    echo "Dialect \"$d\" not supported"
+    dialects_available
+fi
 
 if [ "$d" == "sqlite" ]; then
     JSON_STRING='{
@@ -106,7 +145,7 @@ else
 fi
 
 # Create database TODO: make node script to do this with sequelize
-if [ "$y" == "true" ]; then
+if [ "$c" == "true" ]; then
     case $d in
         mysql|mariadb)
             if [ $P == "default" ]; then
@@ -138,10 +177,7 @@ if [ "$y" == "true" ]; then
             ;;
         *)
             echo "Database dialect not supported"
-            supported_dialects=(mysql mariadb sqlite mssql postgres)
-            echo "Supported dialects: ${supported_dialects[@]}"
-            usage 1
-            exit 1
+            dialects_available
             ;;
     esac
 fi
