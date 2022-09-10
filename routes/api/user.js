@@ -42,7 +42,7 @@ router.post('/login', notLoggedIn, async (req, res) => {
         res.json({email: user.email, token});
     } catch (err) {
         res.status(400).json({ message: err.message });
-        console.log("error when logging in: " + err.messag);
+        console.log("error when logging in: " + err.message);
     }
     
 });
