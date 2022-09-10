@@ -59,6 +59,26 @@ message_db_creation() {
     fi
 }
 
+set_default_port() {
+    case "$1" in
+        mysql|mariadb)
+            P="3306"
+            ;;
+        sqlite)
+            P=""
+            ;;
+        mssql)
+            P="1433"
+            ;;
+        postgres)
+            P="5432"
+            ;;
+        *)
+            dialects_available
+            ;;
+    esac
+}
+
 SQL_FILE="./database/create.sql"
 
 
@@ -126,6 +146,8 @@ if ! dialect_supported "$d"; then
     dialects_available
 fi
 
+set_default_port "$d"
+
 if [ "$d" == "sqlite" ]; then
     JSON_STRING='{
     \n\t"dialect":"'$d'",
@@ -148,9 +170,6 @@ fi
 if [ "$c" == "true" ]; then
     case $d in
         mysql|mariadb)
-            if [ $P == "default" ]; then
-                P="3306"
-            fi
             output=$(sudo mysql -u $u -p$p -h $h -e "CREATE DATABASE IF NOT EXISTS $n" -P $P 2>&1 &&
             sudo mysql -u $u -p$p -h $h $n < $SQL_FILE -P $P 2>&1)
             message_db_creation "$output"
@@ -160,17 +179,11 @@ if [ "$c" == "true" ]; then
             message_db_creation "$output"
             ;;
         mssql)
-            if [ $P == "default" ]; then
-                P="1433"
-            fi
             output=$(sudo sqlcmd -S $h,$P -U $u -P $p -q "CREATE DATABASE $n" 2>&1 && 
             sudo sqlcmd -S $h,$P -U $u -P $p -i $SQL_FILE 2>&1)
             message_db_creation "$output"
             ;;
         postgres)
-            if [ $P == "default" ]; then
-                P="5432"
-            fi
             output=$(sudo psql -U $u -h $h -p $P -c "CREATE DATABASE $n" 2>&1 && 
             sudo psql -U $u -h $h -p $P -d $n -f $SQL_FILE 2>&1)
             message_db_creation "$output"
