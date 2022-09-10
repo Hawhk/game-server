@@ -16,6 +16,7 @@ const LOGGING = config.logging ? console.log : false;
 if (config.dialect !== 'sqlite') {
     sequelize = new Sequelize(config.database, config.user, config.password, {
         host: config.host,
+        port: config.port,
         dialect: config.dialect,
         logging: LOGGING,
         define: {
