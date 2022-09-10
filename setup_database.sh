@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 usage() {
     usages=(
-        "-d <database>"
+        "-d <database dialect>"
         "-n <database name>"
         "-u <database user>"
         "-p <database password>"
         "-h <database host>"
-        "-p <database port>"
+        "-P <database port>"
         "-l <logging true|false>"
         "-s <sqlite path>"
         "-H <help>"
+        "-y <create database>"
     )
     echo -e "\nUsage: $0"
     for usage in "${usages[@]}"; do
@@ -24,7 +25,9 @@ message_db_creation() {
     if [ "$?" -eq 0 ]; then
         echo "Database created successfully"
     else
-        echo "Error creating database"
+        echo "Error creating database:"
+        echo -e "\t\"$1\""
+        exit 1
     fi
 }
 
@@ -34,7 +37,7 @@ d="sqlite"
 n="games"
 u="root"
 p=""
-h="127.0.0.1"
+h="localhost"
 P="default"
 l="true"
 s="./database/db.sqlite"
@@ -52,7 +55,7 @@ while getopts ":d:n:u:ph:l:y" o; do
             u=${OPTARG}
             ;;
         p) #database password 
-            echo "Enter password: "
+            echo "Enter database password for user \"$u\": "
             read -s p
             ;;
         h)  #database host
@@ -102,31 +105,36 @@ else
     \n}'
 fi
 
+# Create database TODO: make node script to do this with sequelize
 if [ "$y" == "true" ]; then
     case $d in
         mysql|mariadb)
             if [ $P == "default" ]; then
                 P="3306"
             fi
-            sudo mysql -u $u -p$p -h $h -e "CREATE DATABASE IF NOT EXISTS $n" -P $P &&
-            sudo mysql -u $u -p$p -h $h $n < $SQL_FILE -P $P && message_db_creation
+            output=$(sudo mysql -u $u -p$p -h $h -e "CREATE DATABASE IF NOT EXISTS $n" -P $P 2>&1 &&
+            sudo mysql -u $u -p$p -h $h $n < $SQL_FILE -P $P 2>&1)
+            message_db_creation "$output"
             ;;
         sqlite)
-            sudo sqlite3 $s < ./database/create.sql && message_db_creation
+            output=$(sudo sqlite3 $s < ./database/create.sql 2>&1)
+            message_db_creation "$output"
             ;;
         mssql)
             if [ $P == "default" ]; then
                 P="1433"
             fi
-            sudo sqlcmd -S $h,$P -U $u -P $p -q "CREATE DATABASE $n" && 
-            sudo sqlcmd -S $h,$P -U $u -P $p -i $SQL_FILE && message_db_creation
+            output=$(sudo sqlcmd -S $h,$P -U $u -P $p -q "CREATE DATABASE $n" 2>&1 && 
+            sudo sqlcmd -S $h,$P -U $u -P $p -i $SQL_FILE 2>&1)
+            message_db_creation "$output"
             ;;
         postgres)
             if [ $P == "default" ]; then
                 P="5432"
             fi
-            sudo psql -U $u -h $h -p $P -c "CREATE DATABASE $n" && 
-            sudo psql -U $u -h $h -p $P -d $n -f $SQL_FILE && message_db_creation
+            output=$(sudo psql -U $u -h $h -p $P -c "CREATE DATABASE $n" 2>&1 && 
+            sudo psql -U $u -h $h -p $P -d $n -f $SQL_FILE 2>&1)
+            message_db_creation "$output"
             ;;
         *)
             echo "Database dialect not supported"
@@ -139,11 +147,12 @@ if [ "$y" == "true" ]; then
 fi
 
 echo -e $JSON_STRING > config.json
-node ./models > /dev/null
+output=$(node ./models 2>&1)
 
 if [ $? -eq 0 ]; then
     echo "Database setup complete"
 else
-    echo "Database setup failed"
+    echo "Database setup failed:"
+    echo "$output"
     exit 1
 fi

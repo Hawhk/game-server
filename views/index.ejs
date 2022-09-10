@@ -12,7 +12,14 @@
         <div class="container">
             <% games.forEach(game => { %>
                 <a href="/game/<%- game.id %>" class="box">
-                    <div><%- game.name.charAt(0).toUpperCase() + game.name.slice(1) %></div>
+                    <div class="game-title"><%- game.name.charAt(0).toUpperCase() + game.name.slice(1) %></div>
+                    <div class="game-image">
+                        <% if ( game.image ) { %>
+                            <img src="/static/img/<%- game.name %>/<% game.image %>" alt="Game image">
+                        <% } else { %>
+                            <img src="/static/img/default.png" alt="Default game image" height="80%" width="80%">
+                        <% } %>
+                    </div>
                 </a>
             <% }) %>
         </div>
