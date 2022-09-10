@@ -196,6 +196,7 @@ if [ "$c" == "true" ]; then
 fi
 
 echo -e $JSON_STRING > config.json
+echo "Testing database connection..."
 output=$(node ./models 2>&1)
 
 if [ $? -eq 0 ]; then
