@@ -14,6 +14,7 @@ const notLoggedIn = (req, res, next) => {
         res.status(400).json({
             message: "You are already logged in",
         });
+        console.log(req.session.user + " is already logged in");
     } else {
         next();
     }
@@ -23,6 +24,7 @@ const loggedIn = (req, res, next) => {
     if (req.session.user) {
         next();
     } else {
+        console.log(req.session.user + " is not logged in");
         res.status(400).json({
             message: "You are not logged in",
         });
