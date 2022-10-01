@@ -96,22 +96,14 @@ router.get("/:keyToFilter/:value", (req, res) => {
 });
 
 router.get("/ips", async (req, res) => {
-    let logRows;
-    if (req.query.month) {
-        const fileName = PATH + log.getYearMonth(req.query) + FILE_ENDING;
-        logRows = log.getLog(fileName);
-    } else if (req.query.year && !req.query.month) {
-        logRows = log.getLogsForYear(req.query.year);
-    } else {
-        const fileName = PATH + log.getYearMonth() + FILE_ENDING;
-        logRows = log.getLog(fileName);
-    }
+    let logRows = getLogRows(req);
     const keys = ["status", "method"];
     let ips = {};
     logRows.forEach((log) => {
-        ips[log.ip]
-            ? ips[log.ip].count++
-            : (ips[log.ip] = { count: 1, days: 0 });
+        let logIp = ips[log.ip];
+        ips[log.ip] = logIp
+            ? { count: logIp.count + 1, days: logIp.days }
+            : { count: 1, days: 0 };
 
         keys.forEach((key) => {
             if (!ips[log.ip][key]) {
@@ -142,5 +134,19 @@ router.get("/ips", async (req, res) => {
     });
     res.json(ips);
 });
+
+function getLogRows(req) {
+    let logRows;
+    if (req.query.month) {
+        const fileName = PATH + log.getYearMonth(req.query) + FILE_ENDING;
+        logRows = log.getLog(fileName);
+    } else if (req.query.year && !req.query.month) {
+        logRows = log.getLogsForYear(req.query.year);
+    } else {
+        const fileName = PATH + log.getYearMonth() + FILE_ENDING;
+        logRows = log.getLog(fileName);
+    }
+    return logRows;
+}
 
 module.exports = router;
