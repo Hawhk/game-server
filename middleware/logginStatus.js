@@ -1,11 +1,10 @@
-
 const notLoggedInRedirectHome = (req, res, next) => {
     if (req.session.user) {
-        res.redirect('/');
+        res.redirect("/");
     } else {
         next();
     }
-}
+};
 
 const notLoggedIn = (req, res, next) => {
     if (req.session.user) {
@@ -16,7 +15,7 @@ const notLoggedIn = (req, res, next) => {
     } else {
         next();
     }
-}
+};
 
 const loggedIn = (req, res, next) => {
     if (req.session.user) {
@@ -27,7 +26,7 @@ const loggedIn = (req, res, next) => {
             message: "You are not logged in",
         });
     }
-}
+};
 
 const logginStatus = {
     notLoggedInRedirectHome,

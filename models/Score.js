@@ -1,7 +1,7 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    class Script extends Model {
+    class Score extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -9,31 +9,34 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Script.belongsTo(models.Game, {
-                foreignKey: "game_id",
+            Score.belongsTo(models.ScoreBoard, {
+                foreignKey: "score_board_id",
+                onDelete: "CASCADE",
+            });
+            Score.belongsTo(models.User, {
+                foreignKey: "user_id",
                 onDelete: "CASCADE",
             });
         }
     }
-    Script.init(
+    Score.init(
         {
             id: {
                 type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV4,
                 primaryKey: true,
             },
-            game_id: DataTypes.UUID,
-            path: DataTypes.STRING,
-            type: DataTypes.STRING(64),
-            nr: DataTypes.INTEGER,
+            score_board_id: DataTypes.UUID,
+            user_id: DataTypes.UUID,
+            score: DataTypes.INTEGER,
         },
         {
             sequelize,
-            modelName: "Script",
-            tableName: "script",
+            modelName: "ScoreBoard",
+            tableName: "score_board",
             underscore: true,
-            timestamps: false,
+            timestamps: true,
         }
     );
-    return Script;
+    return Score;
 };

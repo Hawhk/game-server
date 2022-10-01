@@ -15,18 +15,18 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
     Game.init({
-      id:{
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
-      },
-      name: DataTypes.STRING
+        id:{
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true
+        },
+        name: DataTypes.STRING
     }, {
-      sequelize,
-      modelName: 'Game',
-      tableName: 'game',
-      underscore: true,
-      timestamps: false,
+        sequelize,
+        modelName: 'Game',
+        tableName: 'game',
+        underscore: true,
+        timestamps: false,
     });
     return Game;
 };

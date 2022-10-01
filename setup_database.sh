@@ -124,7 +124,6 @@ while getopts ":d:n:u:ph:l:s:c" o; do
         c) #create database
             c="true"
             ;;
-
         :)
             if [[ $OPTARG != "d" ]]; then
                 echo "Option -$OPTARG requires an argument." >&2
@@ -166,43 +165,22 @@ else
     \n}'
 fi
 
-# Create database TODO: make node script to do this with sequelize
-if [ "$c" == "true" ]; then
-    case $d in
-        mysql|mariadb)
-            output=$(sudo mysql -u $u -p$p -h $h -e "CREATE DATABASE IF NOT EXISTS $n" -P $P 2>&1 &&
-            sudo mysql -u $u -p$p -h $h $n < $SQL_FILE -P $P 2>&1)
-            message_db_creation "$output"
-            ;;
-        sqlite)
-            output=$(sudo sqlite3 $s < ./database/create.sql 2>&1)
-            message_db_creation "$output"
-            ;;
-        mssql)
-            output=$(sudo sqlcmd -S $h,$P -U $u -P $p -q "CREATE DATABASE $n" 2>&1 && 
-            sudo sqlcmd -S $h,$P -U $u -P $p -i $SQL_FILE 2>&1)
-            message_db_creation "$output"
-            ;;
-        postgres)
-            output=$(sudo psql -U $u -h $h -p $P -c "CREATE DATABASE $n" 2>&1 && 
-            sudo psql -U $u -h $h -p $P -d $n -f $SQL_FILE 2>&1)
-            message_db_creation "$output"
-            ;;
-        *)
-            echo "Database dialect not supported"
-            dialects_available
-            ;;
-    esac
-fi
-
 echo -e $JSON_STRING > config.json
-echo "Testing database connection..."
-output=$(node ./models 2>&1)
+# Create database 
+if [ "$c" == "true" ]; then
+    echo "Trying to create database"
+    output=$(node ./models sync 2>&1)
+else 
+    echo "Testing database connection..."
+    output=$(node ./models 2>&1)
+fi 
 
 if [ $? -eq 0 ]; then
     echo "Database setup complete"
 else
     echo "Database setup failed:"
     echo "$output"
+    echo "Deleteing config.json"
+    rm config.json
     exit 1
 fi

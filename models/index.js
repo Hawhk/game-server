@@ -21,9 +21,6 @@ if (config.dialect !== 'sqlite') {
         logging: LOGGING,
         define: {
             timestamps: false
-        },
-        define: {
-            timestamps: false
         }
     });
 } else {
@@ -60,6 +57,10 @@ Object.keys(db).forEach(modelName => {
         db[modelName].associate(db);
     }
 });
+
+if (process.argv[2] === 'sync') {
+    sequelize.sync();
+}
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

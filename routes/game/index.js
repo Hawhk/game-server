@@ -1,21 +1,26 @@
-const express  = require('express');
+const express = require("express");
 const router = express.Router();
-const { Game, Script } = require('../../models');
+const { Game, Script } = require("../../models");
 
-router.get('/:id', (req, res) => {
+router.get("/:id", (req, res) => {
     Game.findByPk(req.params.id, {
-        include: [{model:Script}],
-        order: [[Script, 'nr', 'asc']]
-    } ).then(game => {
-        if (game) {
-            res.render('game', { game: game.dataValues, user: req.session.user });
-        } else {
-            res.status(400).send('game not found');
-        }
-    }).catch(err => {
-        res.status(400).send(err.messege);
-        console.log(err);
-    });
+        include: [{ model: Script }],
+        order: [[Script, "nr", "asc"]],
+    })
+        .then((game) => {
+            if (game) {
+                res.render("game", {
+                    game: game.dataValues,
+                    user: req.session.user,
+                });
+            } else {
+                res.status(400).send("game not found");
+            }
+        })
+        .catch((err) => {
+            res.status(400).send(err.messege);
+            console.log(err);
+        });
 });
 
-module.exports=router;
+module.exports = router;
