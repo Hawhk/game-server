@@ -45,6 +45,52 @@ router.get("/:keyToFilter/:value", (req, res) => {
         logRows = log.getLog(fileName);
     }
 
+    logRows = filterRows(req, logRows, keyToFilter, value);
+
+    filterAndRespond(res, req, logRows);
+});
+
+router.get("/ips", async (req, res) => {
+    let logRows = getLogRows(req);
+    const keys = ["status", "method"];
+    let ips = {};
+    logRows.forEach((log) => {
+        let logIp = ips[log.ip];
+        ips[log.ip] = logIp
+            ? { count: logIp.count + 1, days: logIp.days }
+            : { count: 1, days: 0 };
+
+        keys.forEach((key) => {
+            if (!ips[log.ip][key]) {
+                ips[log.ip][key] = {};
+            }
+            let logKey = log[key];
+            if (!ips[log.ip][key][logKey]) {
+                ips[log.ip][key][logKey] = 0;
+            }
+            ips[log.ip][key][logKey]++;
+        });
+        if (!ips[log.ip]["date"]) {
+            ips[log.ip]["date"] = {};
+        }
+
+        let date = new Date(log["date"].split(":")[0]);
+        let dateKey =
+            date.getFullYear() + (date.getMonth() + 1) + date.getDate();
+
+        if (!ips[log.ip]["date"][dateKey]) {
+            ips[log.ip]["date"][dateKey] = 0;
+            ips[log.ip].days++;
+        }
+        ips[log.ip]["date"][dateKey]++;
+    });
+    Object.keys(ips).forEach((ip) => {
+        delete ips[ip]["date"];
+    });
+    res.json(ips);
+});
+
+function filterRows(req, logRows, keyToFilter, value) {
     switch (req.query.comp) {
         case "neq":
             logRows = logRows.filter(
@@ -91,49 +137,8 @@ router.get("/:keyToFilter/:value", (req, res) => {
             );
             break;
     }
-
-    filterAndRespond(res, req, logRows);
-});
-
-router.get("/ips", async (req, res) => {
-    let logRows = getLogRows(req);
-    const keys = ["status", "method"];
-    let ips = {};
-    logRows.forEach((log) => {
-        let logIp = ips[log.ip];
-        ips[log.ip] = logIp
-            ? { count: logIp.count + 1, days: logIp.days }
-            : { count: 1, days: 0 };
-
-        keys.forEach((key) => {
-            if (!ips[log.ip][key]) {
-                ips[log.ip][key] = {};
-            }
-            let logKey = log[key];
-            if (!ips[log.ip][key][logKey]) {
-                ips[log.ip][key][logKey] = 0;
-            }
-            ips[log.ip][key][logKey]++;
-        });
-        if (!ips[log.ip]["date"]) {
-            ips[log.ip]["date"] = {};
-        }
-
-        let date = new Date(log["date"].split(":")[0]);
-        let dateKey =
-            date.getFullYear() + (date.getMonth() + 1) + date.getDate();
-
-        if (!ips[log.ip]["date"][dateKey]) {
-            ips[log.ip]["date"][dateKey] = 0;
-            ips[log.ip].days++;
-        }
-        ips[log.ip]["date"][dateKey]++;
-    });
-    Object.keys(ips).forEach((ip) => {
-        delete ips[ip]["date"];
-    });
-    res.json(ips);
-});
+    return logRows;
+}
 
 function getLogRows(req) {
     let logRows;

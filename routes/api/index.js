@@ -6,6 +6,6 @@ router.get("", async (req, res) => {
 });
 router.use("/logs/", require("./log"));
 router.use("/user/", require("./user"));
-router.use("/scoreBoard/", require("./scoreBoard"));
+// router.use("/scoreBoard/", require("./scoreBoard"));
 
 module.exports = router;

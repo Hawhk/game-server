@@ -9,8 +9,12 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Script.belongsTo(models.Game, {
-                foreignKey: "game_id",
+            Script.belongsTo(models.ScoreBoard, {
+                foreignKey: "score_board_id",
+                onDelete: "CASCADE",
+            });
+            Script.belongsTo(models.User, {
+                foreignKey: "user_id",
                 onDelete: "CASCADE",
             });
         }
@@ -22,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: DataTypes.UUIDV4,
                 primaryKey: true,
             },
-            game_id: DataTypes.UUID,
+            score_board_id: DataTypes.UUID,
+            user_id: DataTypes.UUID,
             path: DataTypes.STRING,
             type: DataTypes.STRING(64),
             nr: DataTypes.INTEGER,
