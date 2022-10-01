@@ -1,9 +1,9 @@
 const express  = require('express');
 const router = express.Router();
-const { Game, Script } = require('../models');
+const { Game, Script } = require('../../models');
 
 router.get('/:id', (req, res) => {
-    Game.findByPk(req.params.id, { 
+    Game.findByPk(req.params.id, {
         include: [{model:Script}],
         order: [[Script, 'nr', 'asc']]
     } ).then(game => {

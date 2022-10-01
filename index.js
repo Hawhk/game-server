@@ -24,12 +24,13 @@ app.use(session({
     resave: false, 
     saveUninitialized: false 
 }));
+// loging
 app.use(log.loging(logingFormat, logDir));
+// static files
 app.use('/gamestatic', express.static('games'));
 app.use('/static', express.static('static'));
-app.use('/api', require('./routes/api/index'));
-app.use('/', require('./routes/index'));
-app.use('/game/', require('./routes/game'));
+// routes
+app.use('/', require('./routes'));
 app.use((req, res) => {
     res.send(req.url);
 });

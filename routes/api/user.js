@@ -2,37 +2,16 @@ const express  = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { User } = require("../../models");
+const { authJwt, logginStatus } = require("../../middleware");
 
-const jwtSecret = process.env.JWT_SECRET || 'secret';
+
 
 const createToken = (id) => {
-    return jwt.sign({id}, jwtSecret, {expiresIn: "1d"});
-}
-
-const notLoggedIn = (req, res, next) => {
-    if (req.session.user) {
-        res.status(400).json({
-            message: "You are already logged in",
-        });
-        console.log(req.session.user + " is already logged in");
-    } else {
-        next();
-    }
-}
-
-const loggedIn = (req, res, next) => {
-    if (req.session.user) {
-        next();
-    } else {
-        console.log(req.session.user + " is not logged in");
-        res.status(400).json({
-            message: "You are not logged in",
-        });
-    }
+    return jwt.sign({id}, authJwt.JWT_SECRET, {expiresIn: "1d"});
 }
 
 // login user
-router.post('/login', notLoggedIn, async (req, res) => {
+router.post('/login', logginStatus.notLoggedIn, async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -48,7 +27,7 @@ router.post('/login', notLoggedIn, async (req, res) => {
 });
 
 // signup user
-router.post('/signup', notLoggedIn, async (req, res) => {
+router.post('/signup', logginStatus.notLoggedIn, async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.signup(email.toLowerCase(), password);
@@ -62,7 +41,7 @@ router.post('/signup', notLoggedIn, async (req, res) => {
 });
 
 // logout user
-router.post('/logout', loggedIn, (req, res) => {
+router.post('/logout', logginStatus.loggedIn, (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             res.status(500).json({ message: err.message });
@@ -72,4 +51,4 @@ router.post('/logout', loggedIn, (req, res) => {
     });
 });
 
-module.exports={router, loggedIn, notLoggedIn};
+module.exports=router;
